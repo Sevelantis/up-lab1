@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.Runtime.InteropServices.ComTypes;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,6 +18,7 @@ namespace Lab1_up
         private ResolutionList resolutions;
         private IMoniker camera_moniker;
         private int res_index = 0;
+        private string dir = "C:/Users/Aron/Desktop/FOLDER/";
 
         public MainWindow()
         {
@@ -32,6 +35,7 @@ namespace Lab1_up
 
             //update combobox
             cameraCmbBox.ItemsSource = _CameraChoice.Devices;
+
         }
 
         // on window closed:
@@ -52,8 +56,8 @@ namespace Lab1_up
                 resolutionCmbBox.ItemsSource = resolutions;
 
                 cameraControl.CameraControl.SetCamera(camera_moniker, resolutions[res_index]);
-
             }
+
         }
 
         //on combo box resolution selection:
@@ -67,6 +71,26 @@ namespace Lab1_up
             }
         }
 
+        //on screenshot button clicked
+        private void OnScreenshotButtonClicked(object sender, RoutedEventArgs e)
+        {
+            Bitmap bitmap = cameraControl.CameraControl.SnapshotOutputImage();
+            if (bitmap == null) return;
+            bitmap.Save(dir + " screen.jpg", ImageFormat.Jpeg);
+        }
+
+        private void OnStartRecButtonClicked(object sender, RoutedEventArgs e)
+        {
+        }
+        private void OnStopRecButtonClicked(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void OnOpenSettingsButtonClicked(object sender, RoutedEventArgs e)
+        {
+            Camera.DisplayPropertyPage_Device(camera_moniker, cameraControl.CameraControl.Handle);
+        }
 
     }
 }
