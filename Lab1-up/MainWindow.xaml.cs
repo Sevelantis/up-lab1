@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Controls;
 using Camera_NET;
 using DirectShowLib;
 
@@ -10,6 +11,7 @@ namespace Lab1_up
     /// </summary>
     public partial class MainWindow : Window
     {
+        private CameraChoice _CameraChoice;
         public MainWindow()
         {
             InitializeComponent();
@@ -17,28 +19,26 @@ namespace Lab1_up
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            // Camera choice
-            CameraChoice _CameraChoice = new CameraChoice();
+            _CameraChoice = new CameraChoice();
 
-            // Get List of devices (cameras)
             _CameraChoice.UpdateDeviceList();
 
-            // To get an example of camera and resolution change look at other code samples 
-            if (_CameraChoice.Devices.Count > 0)
-            {
-                // Device moniker. It's like device id or handle.
-                // Run first camera if we have one
-                var camera_moniker = _CameraChoice.Devices[0].Mon;
-
-                // Set selected camera to camera control with default resolution
-                cameraControl.CameraControl.SetCamera(camera_moniker, null);
-            }
+            //update combobox
+            cmbBox.ItemsSource = _CameraChoice.Devices;
         }
 
         private void Window_Closed(object sender, EventArgs e)
         {
-            // Close camera. It's safe to call CloseCamera() even if no camera was set.
             cameraControl.CameraControl.CloseCamera();
+        }
+
+        private void CmbBoxSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (_CameraChoice.Devices.Count > 0)
+            {
+                var camera_moniker = _CameraChoice.Devices[cmbBox.SelectedIndex].Mon;
+                cameraControl.CameraControl.SetCamera(camera_moniker, null);
+            }
         }
     }
 }
